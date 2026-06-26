@@ -19,6 +19,7 @@
 
         <receiver
             android:name=".WeatherWidgetProvider"
+            android:label="Widget Cuaca"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -43,6 +44,8 @@
         <activity android:name=".MahasiswaActivity" android:exported="false" />
         <activity android:name=".TambahMahasiswaActivity" />
         <activity android:name=".CuacaActivity" />
-
+        <activity
+            android:name=".PpvActivity"
+            android:exported="false" />
     </application>
 </manifest>

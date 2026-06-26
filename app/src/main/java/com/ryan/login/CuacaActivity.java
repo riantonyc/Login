@@ -197,6 +197,9 @@ public class CuacaActivity extends AppCompatActivity {
                     sendBroadcast(intent);
                     // ==========================================================
 
+                    // ---> MEMICU POP-UP PEMASANGAN WIDGET OTOMATIS <---
+                    mintaPasangWidgetOtomatis();
+
                     etKota.setText(name);
                     tvInfoKota.setText("KOTA: " + name.toUpperCase() + "\nMATAHARI TERBIT: " + formatWaktu(sunrise) + " (LOKAL)\nMATAHARI TERBENAM: " + formatWaktu(sunset) + " (LOKAL)");
 
@@ -244,5 +247,30 @@ public class CuacaActivity extends AppCompatActivity {
 
     private String formatWaktu(long timestamp) {
         return new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date(timestamp * 1000));
+    }
+
+    // ==========================================================
+    // FITUR AUTO-PIN WIDGET UNTUK ANDROID 8.0 KE ATAS
+    // ==========================================================
+    private void mintaPasangWidgetOtomatis() {
+        android.content.SharedPreferences prefs = getSharedPreferences("WeatherPrefs", MODE_PRIVATE);
+        boolean sudahPernahDitanya = prefs.getBoolean("SUDAH_DITAWARKAN_WIDGET", false);
+
+        // Jika sudah pernah ditawarkan, jangan munculkan pop-up lagi
+        if (sudahPernahDitanya) return;
+
+        // Memeriksa versi Android (hanya berlaku untuk Android 8.0 Oreo ke atas)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            android.appwidget.AppWidgetManager appWidgetManager = getSystemService(android.appwidget.AppWidgetManager.class);
+            android.content.ComponentName myProvider = new android.content.ComponentName(this, WeatherWidgetProvider.class);
+
+            // Jika perangkat mendukung fitur ini, tampilkan dialog pemasangan otomatis
+            if (appWidgetManager != null && appWidgetManager.isRequestPinAppWidgetSupported()) {
+                appWidgetManager.requestPinAppWidget(myProvider, null, null);
+
+                // Tandai bahwa user sudah mendapat pop-up ini
+                prefs.edit().putBoolean("SUDAH_DITAWARKAN_WIDGET", true).apply();
+            }
+        }
     }
 }
